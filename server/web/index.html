@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html ng-app="RFIDCardData">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>RFIDPi</title>
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon" sizes="16x16">
+    <link rel="stylesheet" href="lib/css/bootswatch-bootstrap-3.3.6.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <script src="lib/js/angular.js" type="text/javascript"></script>
+    <link rel=”apple-touch-icon” href=”img/apple-touch-icon.png”>
+</head>
+
+<body ng-controller="DataTableController as TagCntrl" ng-cloak="">
+    <div class="container">
+        <!--
+    <div class="jumbotron text-center">
+        <h1>RFID Card Data</h1>
+    </div>
+-->
+
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <!-- Navbar Collapsable (for mobile view) -->
+
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbarCollapse1" aria-expanded="false"><span class="sr-only">Toggle Navigation</span></button> <a class="navbar-brand"><img src="img/rfid.svg" width="25px"></a>
+                </div>
+                
+                <!-- Navbar Links and Such -->
+                <div class="collapse navbar-collapse" id="navbarCollapse1">
+                    <!-- Left Side -->
+                    <ul class="nav navbar-nav">
+                        <li data-toggle="modal" data-target="#confirmDestoryDatabase"><a>Delete All</a></li>
+                    </ul>
+                    <!--Right Side-->
+                    <ul class="nav navbar-nav navbar-right">
+	                     <li data-toggle="modal" data-target="#optionsModal"><a><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div ng-switch="currView">
+            <div ng-switch-when="table">
+                <div id="table-view" class="main-view table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-color">
+                            <tr>
+                                <th id="bits" class="orderTable" ng-click="sortBy('bits')">Bits</th>
+
+                                <th id="binary_value" class="orderTable" ng-click="sortBy('binary_value')">Binary</th>
+
+                                <th id="hex_value" class="orderTable" ng-click="sortBy('hex_value')">Hex</th>
+
+                                <th id="facility_code" class="orderTable" ng-click="sortBy('facility_code')">Facility Code</th>
+
+                                <th id="unique_code" class="orderTable" ng-click="sortBy('unique_code')">Unique Code</th>
+
+                                <th id="proxmark" class="orderTable" ng-click="sortBy('proxmark')">Proxmark Code</th>
+
+                                <th id="date_scanned" class="orderTable" ng-click="sortBy('date_scanned')">Date Scanned</th>
+
+                                <th id="delete" class="text-center">Delete</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tagDataTable">
+                            <!-- data is dynamically created in a script -->
+
+                            <tr ng-repeat="tag in tags | orderBy:sortVal:reverse" id="${index}" class="clickRow" ng-click="selectTag(tag)">
+                                <td data-toggle="modal" data-target="#tagModal">{{tag.bits}}</td>
+
+                                <td data-toggle="modal" data-target="#tagModal">{{tag.binary_value}}</td>
+
+                                <td data-toggle="modal" data-target="#tagModal">{{tag.hex_value}}</td>
+
+                                <td data-toggle="modal" data-target="#tagModal">{{tag.facility_code}}</td>
+
+                                <td data-toggle="modal" data-target="#tagModal">{{tag.unique_code}}</td>
+
+                                <td data-toggle="modal" data-target="#tagModal">{{tag.proxmark}}</td>
+
+                                <td data-toggle="modal" data-target="#tagModal">{{tag.scanned}}</td>
+
+                                <td data-toggle="modal" data-target="#confirmDelModal" class="deleteCol text-center" title="Delete">
+                                    <div class="glyphicon glyphicon-remove deleteItemButton"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Modal tag View for Displaying tag Data  -->
+		    <div class="modal fade" id="tagModal" role="dialog">
+		        <div id="showTagModal" class="modal-dialog">
+		            <div class="modal-content text-center">
+		                <div class="modal-header">
+		                    <h4 class="modal-title">Card scanned at {{selectedTag.scanned}}</h4>
+		                </div>
+		
+		                <div class="modal-body">
+		                    <div class="panel-body">
+		                        <div id="tagModalDataFrame">
+		                            <div class="tagModalData">
+		                                <p><b>Binary:</b> {{selectedTag.binary_value}}</p>
+		
+		                                <p><b>Facility Code:</b> {{selectedTag.facility_code}}</p>
+		
+		                                <p><b>Unique Code:</b> {{selectedTag.unique_code}}</p>
+		                                
+		                                <p><b>Hex Code:</b> {{selectedTag.hex_value}}</p>
+		
+		                                <p><b>Proxmark Code:</b> {{selectedTag.proxmark}}</p>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		
+		                <div class="modal-footer">
+		                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+            
+            <!-- Modal tag View for confirmDestoryDatabase  -->
+            <div class="modal fade" id="confirmDestoryDatabase" role="dialog">
+                <div class="modal-dialog modal-med">
+                    <div class="modal-content text-center">
+                        <div class="modal-header">
+                            <h2 class="modal-title">Are you sure you want to destroy the database?</h2>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="panel-body">
+                                <div id="destoryModalDataFrame">
+                                    This will delete the database file and restart the server. Unless you have backed up the database file yourself, this will <b>permanently</b> remove all records. Everything will be gone!
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button id="confirmDestoryButton" type="button" class="btn btn-danger" data-dismiss="modal" ng-click="destoryDatabase() ">DESTORY</button> <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!-- DELETE CONFIRM MODAL -->
+            <div class="modal fade" id="confirmDelModal" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title text-center">Confirm Delete</h2>
+                        </div>
+
+                        <div class="modal-body">
+                            <div id="delete-table-view" class="main-view table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="thead-color">
+                                        <tr>
+                                            <th class="orderTable">Binary</th>
+
+                                            <th class="orderTable hidden-xs">Card</th>
+
+                                            <th class="orderTable hidden-sm hidden-xs">Scanned</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="tagToDelete">
+                                        <tr>
+                                            <td>{{selectedTag.binary_value}}</td>
+
+                                            <td class="hidden-xs">{{selectedTag.facility_code}} {{selectedTag.unique_code}}</td>
+
+                                            <td class="hidden-md hidden-sm hidden-xs">{{selectedTag.scanned}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div id="deleteButtonDiv" class="text-center">
+                                <button id="confirmDeleteButton" type="button" class="btn btn-danger" data-dismiss="modal" ng-click="deleteTag(selectedTag)">DELETE</button>
+                            </div>
+                        </div>
+
+                        <div id="cancelDeleteButtonDiv" class="modal-footer">
+                            <button id="cancelDeleteButton" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!-- Spinning Loading Modal -->
+            <div class="modal fade" id="loadingModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content text-center">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Loading...</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="progress">
+                                <div id="progressBar" class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:50%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Settings Modal -->
+            <div class="modal fade" id="optionsModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content text-center">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Options</h4>
+                        </div>
+
+                        <div class="modal-body">
+	                        <button id="restartButton" type="button" class="btn btn-warning" >Restart</button>
+	                        <button id="shutdownButton" type="button" class="btn btn-danger">Shutdown</button>
+                        </div>
+                        <div class="modal-footer">
+                        		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Restarting Modal -->
+            <div class="modal fade" id="restartModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content text-center">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Restarting</h4>
+                        </div>
+
+                        <div class="modal-body">
+	                        <p>Restarting, please wait a few minutes and refresh the page.</p>
+                        </div>
+                        <div class="modal-footer">
+                        		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Restarting Modal -->
+            <div class="modal fade" id="shutdownModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content text-center">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Shutdown</h4>
+                        </div>
+
+                        <div class="modal-body">
+	                        <p>Shutting down. You may close the window now.</p>
+                        </div>
+                        <div class="modal-footer">
+                        		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="lib/js/jquery-2.2.4.min.js" type="text/javascript"></script> 
+        <script src="lib/js/bootstrap-3.3.6.min.js" type="text/javascript"></script> 
+        <script src="tag_logic.js" type="text/javascript"></script>
+</div>
+</body>
+</html>

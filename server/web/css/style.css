@@ -1,0 +1,122 @@
+body {
+    background-color: #85C4ED;
+}
+
+.jumbotron {
+    background-color: #fff;
+    padding: 20px;
+}
+
+#viewIcon {
+    font-size: 17px;
+    margin-right: 5px;
+}
+
+
+li > a {
+    cursor: pointer;
+    margin: 0px 5px 0px 5px;
+}
+
+.navbar-nav > li:hover {
+    background-color: #1AC9A7;
+}
+
+.alert {
+    width: 85%;
+}
+
+table {
+    background-color: #fff;
+}
+
+th > span {
+    float: right;
+    /*margin-top: 3px;*/
+}
+
+.thead-color {
+    background-color: #18bc9c;
+    color: #fff;
+}
+
+.orderTable {
+    cursor: pointer;
+}
+
+.orderTable:hover {
+     background-color: #1AC9A7;
+}
+
+.actionCol {
+    cursor: default;
+}
+
+.editCol {
+    cursor: pointer;
+}
+.editCol:hover {
+    background-color: #23A40C;
+}
+.editCol:hover > .editItemButton {
+    color: black;
+}
+
+.deleteCol {
+    cursor: pointer;
+}
+.deleteCol:hover {
+    background-color: #DB0C00;
+}
+.deleteCol:hover > .deleteItemButton {
+    color: black;
+}
+
+.editItemButton {
+    color: green;
+}
+.deleteItemButton {
+    color: red;
+}
+
+.ascend_descend {
+  /*content: "keyboard_arrow_right";*/
+  font-size: 21px;
+}
+.ascend_descend:after {
+  content: "keyboard_arrow_up";
+}
+.ascend_descend.reverse:after {
+  content: "keyboard_arrow_down";
+}
+
+.clickRow:hover {
+    cursor: pointer;
+}
+
+.panel {
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+.panel:hover {
+    background-color: #dddddd;
+    border-color: #217dbb;
+}
+
+.restorItemButton {
+    color: #18bc9c;
+}
+
+.restCol:hover {
+    cursor: pointer;
+    background-color: #079FEF;
+}
+
+.restCol:hover > .restorItemButton {
+    color: black;
+}
+
+#confirmDeleteButton {
+    margin: 0 auto;
+}
